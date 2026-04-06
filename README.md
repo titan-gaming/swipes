@@ -9,7 +9,7 @@ Rules:
 - invitedBy → query param
 
 Examples:
-
+```
 /swipe?lobbyId=UUID/join
 → /herolobby/UUID/join
 
@@ -18,3 +18,4 @@ Examples:
 
 /swipe?lobbyId=UUID/results
 → /herolobby/UUID/results
+```
