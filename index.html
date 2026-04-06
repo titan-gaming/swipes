@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JackpotCity Swipe</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    #hero-frame {
+      border: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 640px;
+      display: none;
+    }
+
+    #error {
+      display: none;
+      padding: 24px;
+      font-family: Arial, sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="hero-frame" allow="fullscreen; clipboard-read; clipboard-write"></iframe>
+  <div id="error"></div>
+
+  <script>
+    (function () {
+      const BASE_URL = 'https://jackpotcityswipes.ca/herolobby/';
+      const iframe = document.getElementById('hero-frame');
+      const errorEl = document.getElementById('error');
+
+      function showError(message) {
+        errorEl.textContent = message;
+        errorEl.style.display = 'block';
+        iframe.style.display = 'none';
+      }
+
+      function isValidLobbyPath(value) {
+        // Accept only:
+        // <uuid>/join
+        // <uuid>/results
+        return /^[0-9a-fA-F-]{36}\/(join|results)$/.test(value);
+      }
+
+      function isValidUUID(value) {
+        return /^[0-9a-fA-F-]{36}$/.test(value);
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const lobbyId = params.get('lobbyId');
+      const invitedBy = params.get('invitedBy');
+
+      if (!lobbyId) {
+        showError('Missing lobbyId parameter.');
+        return;
+      }
+
+      if (!isValidLobbyPath(lobbyId)) {
+        showError('Invalid lobbyId format.');
+        return;
+      }
+
+      let targetUrl = BASE_URL + lobbyId;
+
+      if (invitedBy) {
+        if (!isValidUUID(invitedBy)) {
+          showError('Invalid invitedBy format.');
+          return;
+        }
+
+        const targetParams = new URLSearchParams();
+        targetParams.set('invitedBy', invitedBy);
+        targetUrl += '?' + targetParams.toString();
+      }
+
+      iframe.src = targetUrl;
+      iframe.style.display = 'block';
+    })();
+  </script>
+</body>
+</html>
